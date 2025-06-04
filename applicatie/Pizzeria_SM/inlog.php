@@ -2,23 +2,18 @@
 require_once "db_connectie.php";
 session_start();
 
-// // Redirect als al ingelogd
-// if (isset($_SESSION['rol'])) {
-//     if ($_SESSION['rol'] === 'client') {
-//         header("Location: home.php");
-//     } else if ($_SESSION['rol'] === 'personnel') {
-//         header("Location: home.php");
-//     }
-//     exit();
-// }
+// Redirect als al ingelogd
+if (isset($_SESSION['rol'])) {
+    header("Location: home.php");
+    exit();
+}
 
-// ---- HULPFUNCTIE REGISTRATIE ----
+// ---- REGISTRATIE ----
 function registreerGebruiker($gebruikersnaam, $wachtwoord, $voornaam, $achternaam, $adres, $rol = 'client') {
     $conn = maakVerbinding();
     $hash = password_hash($wachtwoord, PASSWORD_DEFAULT);
-    $rol = !empty($rol) ? $rol : 'client';
 
-    $query = "INSERT INTO [dbo].[User] (username, password, first_name, last_name, role, address) 
+    $query = "INSERT INTO [dbo].[User] (username, password, first_name, last_name, role, address)
               VALUES (:username, :password, :first_name, :last_name, :role, :address)";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':username', $gebruikersnaam);
@@ -35,13 +30,13 @@ function registreerGebruiker($gebruikersnaam, $wachtwoord, $voornaam, $achternaa
         $_SESSION['achternaam'] = $achternaam;
         $_SESSION['adres'] = $adres;
         $_SESSION['rol'] = $rol;
+        return "";
     } catch (PDOException $e) {
         return "Registratie mislukt: " . $e->getMessage();
     }
-    return "";
 }
 
-// ---- HULPFUNCTIE LOGIN ----
+// ---- LOGIN ----
 function loginGebruiker($gebruikersnaam, $wachtwoord) {
     $conn = maakVerbinding();
     $query = "SELECT * FROM [dbo].[User] WHERE username = :username";
@@ -52,7 +47,7 @@ function loginGebruiker($gebruikersnaam, $wachtwoord) {
         $stmt->execute();
         $gebruiker = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($gebruiker && password_verify($wachtwoord, $gebruiker['password']) || $wachtwoord == $gebruiker['password'] ) {
+        if ($gebruiker && password_verify($wachtwoord, $gebruiker['password']) || $wachtwoord == $gebruiker['password']) {
             $_SESSION['username'] = $gebruiker['username'];
             $_SESSION['voornaam'] = $gebruiker['first_name'];
             $_SESSION['achternaam'] = $gebruiker['last_name'];
@@ -68,11 +63,11 @@ function loginGebruiker($gebruikersnaam, $wachtwoord) {
 
 // ---- FOUTMELDINGEN ----
 $registratieError = "";
-$loginErrorKlant = "";
-$loginErrorMedewerker = "";
+$loginError = "";
 
 // ---- FORMULIEREN VERWERKEN ----
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Registratie
     if (isset($_POST['actie']) && $_POST['actie'] === 'registreren') {
         $gebruikersnaam = $_POST['reg_username'] ?? '';
         $wachtwoord = $_POST['reg_password'] ?? '';
@@ -91,24 +86,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $registratieError = $fout;
             }
         }
-    } elseif (isset($_POST['actie']) && $_POST['actie'] === 'inloggen') {
-        $rol = $_POST['login_rol'] ?? '';
+    }
+    // Login
+    elseif (isset($_POST['actie']) && $_POST['actie'] === 'inloggen') {
         $gebruikersnaam = $_POST['login_username'] ?? '';
         $wachtwoord = $_POST['login_password'] ?? '';
 
         if (loginGebruiker($gebruikersnaam, $wachtwoord)) {
-            if ($_SESSION['rol'] === "client") {
-                header("Location: home.php");
-            } else {
-                header("Location: home.php");
-            }
+            header("Location: home.php");
             exit();
         } else {
-            if ($rol === "klant") {
-                $loginErrorKlant = "Ongeldige gebruikersnaam of wachtwoord.";
-            } else {
-                $loginErrorMedewerker = "Ongeldige gebruikersnaam of wachtwoord.";
-            }
+            $loginError = "Ongeldige gebruikersnaam of wachtwoord.";
         }
     }
 }
@@ -118,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Pizzeria Sole Machina - Home</title>
+    <title>Pizzeria Sole Machina - Login & Registratie</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -131,48 +119,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </nav>
 </header>
 <main>
-    <!-- Login Tabs -->
     <div class="login-tabs">
-        <button type="button" onclick="showTab('klant')">Klant login</button>
-        <button type="button" onclick="showTab('medewerker')">Medewerker login</button>
+        <button type="button" onclick="showTab('login')">Inloggen</button>
         <button type="button" onclick="showTab('register')">Registreren</button>
     </div>
 
-    <!-- Klant login -->
-    <div id="klant" class="tabcontent">
-        <h2>Klant login</h2>
-        <?php if ($loginErrorKlant): ?>
-            <div style="color:red"><?= htmlspecialchars($loginErrorKlant) ?></div>
+    <!-- Login -->
+    <div id="login" class="tabcontent">
+        <h2>Inloggen</h2>
+        <?php if ($loginError): ?>
+            <div style="color:red"><?= htmlspecialchars($loginError) ?></div>
         <?php endif; ?>
         <form action="" method="post">
             <input type="hidden" name="actie" value="inloggen">
-            <input type="hidden" name="login_rol" value="klant">
-            <label for="klant-username">Gebruikersnaam:</label>
-            <input type="text" name="login_username" id="klant-username" required>
-            <label for="klant-password">Wachtwoord:</label>
-            <input type="password" name="login_password" id="klant-password" required>
+            <label for="login_username">Gebruikersnaam:</label>
+            <input type="text" name="login_username" id="login_username" required>
+            <label for="login_password">Wachtwoord:</label>
+            <input type="password" name="login_password" id="login_password" required>
             <button type="submit">Inloggen</button>
         </form>
     </div>
 
-    <!-- Medewerker login -->
-    <div id="medewerker" class="tabcontent" style="display:none;">
-        <h2>Medewerker login</h2>
-        <?php if ($loginErrorMedewerker): ?>
-            <div style="color:red"><?= htmlspecialchars($loginErrorMedewerker) ?></div>
-        <?php endif; ?>
-        <form action="" method="post">
-            <input type="hidden" name="actie" value="inloggen">
-            <input type="hidden" name="login_rol" value="medewerker">
-            <label for="medewerker-username">Gebruikersnaam:</label>
-            <input type="text" name="login_username" id="medewerker-username" required>
-            <label for="medewerker-password">Wachtwoord:</label>
-            <input type="password" name="login_password" id="medewerker-password" required>
-            <button type="submit">Inloggen</button>
-        </form>
-    </div>
-
-    <!-- Registratieformulier -->
+    <!-- Registratie -->
     <div id="register" class="tabcontent" style="display:none;">
         <h2>Registreren</h2>
         <?php if ($registratieError): ?>
@@ -196,12 +164,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 <script>
     function showTab(tab) {
-        document.getElementById('klant').style.display = (tab === 'klant') ? 'block' : 'none';
-        document.getElementById('medewerker').style.display = (tab === 'medewerker') ? 'block' : 'none';
+        document.getElementById('login').style.display = (tab === 'login') ? 'block' : 'none';
         document.getElementById('register').style.display = (tab === 'register') ? 'block' : 'none';
     }
-    // Toon standaard klant-login
-    showTab('klant');
 </script>
 </body>
 </html>

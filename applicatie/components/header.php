@@ -1,12 +1,14 @@
 <?php
-// Sessie starten om loginstatus te kunnen tonen
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 function maakHeader($titel)
 {
-    if (isset($_SESSION['user'])) {
+    $isIngelogd = isset($_SESSION['user']);
+    $rol = $isIngelogd && isset($_SESSION['role']) ? $_SESSION['role'] : '';
+
+    if ($isIngelogd) {
         $loginStatus = htmlspecialchars($_SESSION['user']) .
                        ' | <a href="logout.php">Uitloggen</a>';
     } else {
@@ -32,14 +34,36 @@ function maakHeader($titel)
         </div>
     </div>
 
-    <nav>
-        <ul>
+    <nav class="main-nav">
+        <ul class="nav-left">
             <li><a href="index.php">Home</a></li>
             <li><a href="menu.php">Menu</a></li>
-            <li><a href="winkelmand.php">Winkelmand</a></li>
-            <li><a href="bestellingen.php">Bestellingen</a></li>
-            <li><a href="profiel.php">Profiel</a></li>
+HTML
+.
+($isIngelogd && $rol === 'Customer'
+    ? '<li><a href="mijn_bestellingen.php">Mijn Bestellingen</a></li>'
+    : ''
+)
+.
+($isIngelogd && $rol === 'Personnel'
+    ? '<li><a href="bestellingen.php">Bestellingen</a></li>'
+    : ''
+)
+.
+<<<HTML
         </ul>
+
+HTML
+.
+($isIngelogd
+    ? '<ul class="nav-right">
+           <li><a href="profiel.php">Profiel</a></li>'
+           . ($rol === 'Customer' ? '<li><a href="winkelmand.php">Winkelmand</a></li>' : '') .
+       '</ul>'
+    : ''
+)
+.
+<<<HTML
     </nav>
 </header>
 

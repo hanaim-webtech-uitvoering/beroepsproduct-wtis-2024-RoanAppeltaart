@@ -1,10 +1,8 @@
-/* =========================
-   BASE
-========================= */
-
 :root {
     --kleur-oker: #D6A400;
+    --kleur-oker-donker: #C19100;
     --kleur-oker-licht: #F3E6B5;
+
     --kleur-tekst: #000000;
     --kleur-footer: #EFEFEF;
     --kleur-link-paars: #6A0DAD;
@@ -17,19 +15,12 @@ html, body {
 }
 
 body {
+    display: flex;
+    flex-direction: column;
+
     font-family: Arial, sans-serif;
     color: var(--kleur-tekst);
     background-color: #FFFFFF;
-}
-
-
-/* =========================
-   LAYOUT (footer onderaan)
-========================= */
-
-body {
-    display: flex;
-    flex-direction: column;
 }
 
 main {
@@ -37,23 +28,15 @@ main {
     padding: 16px;
 }
 
-
-/* =========================
-   HEADER
-========================= */
-
-.site-header,
-header {
+.site-header {
     background-color: var(--kleur-oker);
     color: var(--kleur-tekst);
     padding: 16px;
 }
 
-.site-header h1,
-header h1 {
+.site-header h1 {
     margin: 0 0 8px 0;
 }
-
 
 .header-top {
     display: flex;
@@ -61,7 +44,6 @@ header h1 {
     align-items: center;
     gap: 12px;
 }
-
 
 .login-status {
     white-space: nowrap;
@@ -74,43 +56,49 @@ header h1 {
 }
 
 .login-status a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-/* =========================
-   NAV
-========================= */
+    background-color: var(--kleur-oker-donker);
+    padding: 6px 8px;
+    border-radius: 6px;
+}
 
-nav ul {
+.main-nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
+
     display: flex;
     gap: 12px;
 }
 
-nav a {
+.nav-right {
+    justify-content: flex-end;
+}
+
+.main-nav a {
     color: var(--kleur-tekst);
     text-decoration: none;
     padding: 6px 10px;
     border-radius: 4px;
+    display: inline-block;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.main-nav a:hover {
     background-color: var(--kleur-oker-licht);
 }
-
-
-/* =========================
-   FORMS (login)
-========================= */
 
 form {
     max-width: 420px;
     margin: 24px auto 0 auto;
     padding: 16px;
+
     border: 1px solid var(--kleur-border);
     border-radius: 8px;
     background-color: #FFFFFF;
@@ -126,6 +114,7 @@ form input[type="password"] {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
+
     border: 1px solid var(--kleur-border);
     border-radius: 6px;
     margin-bottom: 12px;
@@ -133,6 +122,7 @@ form input[type="password"] {
 
 form input[type="submit"] {
     padding: 10px 14px;
+
     border: 1px solid var(--kleur-border);
     border-radius: 6px;
     background-color: var(--kleur-oker);
@@ -144,47 +134,37 @@ form input[type="submit"]:hover {
     background-color: var(--kleur-oker-licht);
 }
 
-
-/* =========================
-   FOOTER
-========================= */
-
-.site-footer,
-footer {
+.site-footer {
     background-color: var(--kleur-footer);
     padding: 12px;
     text-align: center;
 }
 
-.site-footer a,
-footer a {
+.site-footer a {
     color: var(--kleur-link-paars);
     text-decoration: none;
 }
 
-.site-footer a:hover,
-footer a:hover {
+.site-footer a:hover {
     text-decoration: underline;
 }
 
-
-/* =========================
-   RESPONSIVE
-========================= */
-
 @media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .site-header,
-    header {
-        padding: 12px;
-    }
-
     main {
         padding: 12px;
+    }
+
+    .site-header {
+        padding: 12px;
+    }
+
+    .main-nav {
+        align-items: flex-start;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        gap: 8px;
     }
 
     form {

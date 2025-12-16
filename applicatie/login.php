@@ -1,20 +1,16 @@
 <?php
-// Sessies zijn nodig om foutmeldingen van verwerk_login.php te lezen
 session_start();
 
-// Layout components inladen
 require_once 'components/header.php';
 require_once 'components/footer.php';
 
-// Header en footer voorbereiden
 $header = maakHeader('Login');
 $footer = maakFooter();
 
-// Foutmelding ophalen uit de sessie (indien aanwezig)
 $foutmelding = '';
 if (isset($_SESSION['login_error'])) {
     $foutmelding = $_SESSION['login_error'];
-    unset($_SESSION['login_error']); // één keer tonen
+    unset($_SESSION['login_error']);
 }
 ?>
 
@@ -23,11 +19,9 @@ if (isset($_SESSION['login_error'])) {
 <h2>Login</h2>
 
 <?php if ($foutmelding !== '') { ?>
-    <!-- Foutmelding tonen wanneer inloggen mislukt -->
     <p><?= htmlspecialchars($foutmelding) ?></p>
 <?php } ?>
 
-<!-- Loginformulier: stuurt gegevens naar de verwerkpagina -->
 <form method="post" action="verwerk_login.php">
     <div>
         <label for="username">Gebruikersnaam</label><br>
@@ -43,6 +37,11 @@ if (isset($_SESSION['login_error'])) {
         <input type="submit" value="Inloggen">
     </div>
 </form>
+
+<p>
+    Nog geen account?
+    <a href="registratie.php">Registreren</a>
+</p>
 
 <?= $footer ?>
 

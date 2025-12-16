@@ -2,12 +2,12 @@
 require_once 'components/header.php';
 require_once 'components/footer.php';
 
-$header = maakHeader('Home');
+$header = maakHeader('Bestelling detail');
 $footer = maakFooter();
 ?>
 
 <?= $header ?>
 
-<h2>Home</h2>
+<h2>Bestelling detail</h2>
 
 <?= $footer ?>

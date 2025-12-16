@@ -4,8 +4,11 @@ function maakFooter()
     return <<<HTML
 </main>
 
-<footer>
-    <p>&copy; Pizzeria Sole Machina</p>
+<footer class="site-footer">
+    <p>
+        &copy; Pizzeria Sole Machina |
+        <a href="privacy.php">Privacyverklaring</a>
+    </p>
 </footer>
 
 </body>

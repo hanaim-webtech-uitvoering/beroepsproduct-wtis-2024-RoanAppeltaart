@@ -1,17 +1,86 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
+/* =========================
+   BASE
+========================= */
+
+:root {
+    --kleur-oker: #D6A400;
+    --kleur-oker-licht: #F3E6B5;
+    --kleur-tekst: #000000;
+    --kleur-footer: #EFEFEF;
+    --kleur-link-paars: #6A0DAD;
+    --kleur-border: #CFCFCF;
 }
 
-header {
-    background-color: #222;
-    color: #fff;
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: var(--kleur-tekst);
+    background-color: #FFFFFF;
+}
+
+
+/* =========================
+   LAYOUT (footer onderaan)
+========================= */
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
     padding: 16px;
 }
 
+
+/* =========================
+   HEADER
+========================= */
+
+.site-header,
+header {
+    background-color: var(--kleur-oker);
+    color: var(--kleur-tekst);
+    padding: 16px;
+}
+
+.site-header h1,
 header h1 {
     margin: 0 0 8px 0;
 }
+
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.login-status {
+    white-space: nowrap;
+}
+
+.login-status a {
+    color: var(--kleur-link-paars);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-status a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   NAV
+========================= */
 
 nav ul {
     list-style: none;
@@ -22,36 +91,104 @@ nav ul {
 }
 
 nav a {
-    color: #fff;
+    color: var(--kleur-tekst);
     text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
 }
 
 nav a:hover {
     text-decoration: underline;
+    background-color: var(--kleur-oker-licht);
 }
 
-main {
+
+/* =========================
+   FORMS (login)
+========================= */
+
+form {
+    max-width: 420px;
+    margin: 24px auto 0 auto;
     padding: 16px;
+    border: 1px solid var(--kleur-border);
+    border-radius: 8px;
+    background-color: #FFFFFF;
 }
 
+form label {
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid var(--kleur-border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+form input[type="submit"] {
+    padding: 10px 14px;
+    border: 1px solid var(--kleur-border);
+    border-radius: 6px;
+    background-color: var(--kleur-oker);
+    color: var(--kleur-tekst);
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: var(--kleur-oker-licht);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.site-footer,
 footer {
-    background-color: #eee;
+    background-color: var(--kleur-footer);
     padding: 12px;
     text-align: center;
 }
 
-/* Scaling */
+.site-footer a,
+footer a {
+    color: var(--kleur-link-paars);
+    text-decoration: none;
+}
+
+.site-footer a:hover,
+footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media (max-width: 768px) {
     nav ul {
         flex-direction: column;
         gap: 8px;
     }
 
+    .site-header,
     header {
         padding: 12px;
     }
 
     main {
+        padding: 12px;
+    }
+
+    form {
+        margin-top: 16px;
         padding: 12px;
     }
 }

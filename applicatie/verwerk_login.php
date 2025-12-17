@@ -37,7 +37,7 @@ if (!password_verify($password, $user['password'])) {
     exit;
 }
 
-// Sessie-ID vernieuwen na succesvolle login (security)
+// Sessie-ID vernieuwen na succesvolle login
 session_regenerate_id(true);
 
 // Login succesvol → sessie vullen

@@ -7,7 +7,7 @@ require_once 'components/footer.php';
 $header = maakHeader('Registreren');
 $footer = maakFooter();
 
-// Foutmelding uit sessie ophalen (één keer tonen)
+// Foutmelding uit sessie ophalen
 $foutmelding = '';
 if (isset($_SESSION['register_error'])) {
     $foutmelding = $_SESSION['register_error'];

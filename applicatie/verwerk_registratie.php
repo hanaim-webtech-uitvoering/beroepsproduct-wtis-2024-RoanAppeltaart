@@ -29,7 +29,7 @@ if (strlen($password) < 6) {
     exit;
 }
 
-// Dubbele username check (stap 2)
+// Dubbele username check
 if (bestaatUser($username)) {
     $_SESSION['register_error'] = 'Gebruikersnaam bestaat al. Kies een andere.';
     header('Location: registratie.php');

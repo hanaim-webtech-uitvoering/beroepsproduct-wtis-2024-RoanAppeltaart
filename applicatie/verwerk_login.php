@@ -13,14 +13,14 @@ require_once 'includes/auth_data.php';
 $username = isset($_POST['username']) ? trim($_POST['username']) : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-// Basisvalidatie
+// Server-side validatie
 if ($username === '' || $password === '') {
     $_SESSION['login_error'] = 'Vul gebruikersnaam en wachtwoord in.';
     header('Location: login.php');
     exit;
 }
 
-// User ophalen uit datalaag
+// User ophalen
 $user = haalUserOp($username);
 
 // Bestaat gebruiker?
@@ -36,6 +36,9 @@ if (!password_verify($password, $user['password'])) {
     header('Location: login.php');
     exit;
 }
+
+// Sessie-ID vernieuwen na succesvolle login (security)
+session_regenerate_id(true);
 
 // Login succesvol → sessie vullen
 $_SESSION['user'] = $user['username'];

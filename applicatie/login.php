@@ -4,9 +4,10 @@ session_start();
 require_once 'components/header.php';
 require_once 'components/footer.php';
 
-$header = maakHeader('Login');
+$header = maakHeader('Inloggen');
 $footer = maakFooter();
 
+// Foutmelding uit sessie ophalen (één keer tonen)
 $foutmelding = '';
 if (isset($_SESSION['login_error'])) {
     $foutmelding = $_SESSION['login_error'];
@@ -16,11 +17,7 @@ if (isset($_SESSION['login_error'])) {
 
 <?= $header ?>
 
-<h2>Login</h2>
-
-<?php if ($foutmelding !== '') { ?>
-    <p><?= htmlspecialchars($foutmelding) ?></p>
-<?php } ?>
+<h2>Inloggen</h2>
 
 <form method="post" action="verwerk_login.php">
     <div>
@@ -38,10 +35,13 @@ if (isset($_SESSION['login_error'])) {
     </div>
 </form>
 
+<?php if ($foutmelding !== '') { ?>
+    <p><?= htmlspecialchars($foutmelding) ?></p>
+<?php } ?>
+
 <p>
     Nog geen account?
     <a href="registratie.php">Registreren</a>
 </p>
 
 <?= $footer ?>
-

@@ -7,21 +7,46 @@ requireRole('Customer');
 
 // Alleen POST toestaan
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: menu.php');
+    header('Location: winkelmand.php');
     exit;
 }
 
-// Product ophalen
+// Terug-url bepalen
+$redirect = isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] !== ''
+    ? $_SERVER['HTTP_REFERER']
+    : 'winkelmand.php';
+
+// Actie bepalen
+$action = isset($_POST['action']) ? trim($_POST['action']) : '';
+
+// Product ophalen indien nodig
 $product = isset($_POST['product']) ? trim($_POST['product']) : '';
 
-if ($product === '') {
-    header('Location: menu.php');
-    exit;
+// Aantal ophalen indien nodig
+$aantal = isset($_POST['aantal']) ? (int) $_POST['aantal'] : 0;
+
+// Acties afhandelen
+switch ($action) {
+    case 'toevoegen':
+        if ($product !== '') {
+            voegToeAanWinkelmand($product);
+        }
+        header('Location: ' . $redirect);
+        exit;
+
+    case 'leegmaken':
+        leegWinkelmand();
+        header('Location: ' . $redirect);
+        exit;
+
+    case 'bijwerken':
+        if ($product !== '') {
+            zetAantalInWinkelmand($product, $aantal);
+        }
+        header('Location: ' . $redirect);
+        exit;
+
+    default:
+        header('Location: winkelmand.php');
+        exit;
 }
-
-// Toevoegen aan winkelmand
-voegToeAanWinkelmand($product);
-
-// Terug naar menu
-header('Location: menu.php');
-exit;

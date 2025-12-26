@@ -2,10 +2,14 @@
 require_once 'components/header.php';
 require_once 'components/footer.php';
 require_once 'includes/menu_data.php';
+require_once 'includes/auth.php';
 
 // Header/Footer
 $header = maakHeader('Menu');
 $footer = maakFooter();
+
+// Klantstatus bepalen (voor + knop)
+$isCustomer = isIngelogd() && huidigeRol() === 'Customer';
 
 // Menu-items ophalen
 $producten = haalMenuItemsOp();
@@ -38,7 +42,19 @@ foreach ($producten as $product) {
                     <article class="menu-card">
                         <div class="menu-card-top">
                             <strong><?= htmlspecialchars($product['name']) ?></strong>
-                            <span class="menu-price">€<?= htmlspecialchars($product['price']) ?></span>
+
+                            <div class="menu-actions">
+                                <span class="menu-price">€<?= htmlspecialchars($product['price']) ?></span>
+
+                                <?php if ($isCustomer) { ?>
+                                    <form method="post" action="verwerk_winkelmand.php" class="add-form">
+                                        <input type="hidden" name="action" value="toevoegen">
+                                        <input type="hidden" name="product"
+                                               value="<?= htmlspecialchars($product['name']) ?>">
+                                        <button type="submit" class="add-button">+</button>
+                                    </form>
+                                <?php } ?>
+                            </div>
                         </div>
 
                         <?php if (!empty($product['ingredients'])) { ?>

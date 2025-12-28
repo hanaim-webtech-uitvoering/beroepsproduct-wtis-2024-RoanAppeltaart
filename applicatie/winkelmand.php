@@ -2,6 +2,7 @@
 require_once 'components/header.php';
 require_once 'components/footer.php';
 require_once 'includes/auth.php';
+require_once 'includes/auth_data.php';
 require_once 'includes/winkelmand_data.php';
 
 // Alleen klanten
@@ -17,6 +18,14 @@ $cart = haalWinkelmandOp();
 // Bestel-foutmelding ophalen
 $bestelError = isset($_SESSION['bestel_error']) ? $_SESSION['bestel_error'] : '';
 unset($_SESSION['bestel_error']);
+
+// Adres ophalen
+$username = $_SESSION['user'];
+$adresDb = haalAdresOp($username);
+$heeftAdres = $adresDb !== '';
+
+// Totaalprijs berekenen
+$totaalPrijs = berekenTotaalPrijs($cart);
 ?>
 
 <?= $header ?>
@@ -63,6 +72,11 @@ unset($_SESSION['bestel_error']);
         </tbody>
     </table>
 
+    <p>
+        <strong>Totaal:</strong>
+        €<?= number_format($totaalPrijs, 2, ',', '.') ?>
+    </p>
+
     <form method="post" action="verwerk_winkelmand.php">
         <input type="hidden" name="action" value="leegmaken">
         <input type="submit" value="Winkelmand leegmaken">
@@ -74,11 +88,18 @@ unset($_SESSION['bestel_error']);
         <p><?= htmlspecialchars($bestelError) ?></p>
     <?php } ?>
 
-    <form method="post" action="verwerk_bestelling.php">
-        <label for="address">Afleveradres</label>
-        <input type="text" name="address" id="address">
-        <input type="submit" value="Bestellen">
-    </form>
+    <?php if ($heeftAdres) { ?>
+        <p>Afleveradres: <?= htmlspecialchars($adresDb) ?></p>
+        <form method="post" action="verwerk_bestelling.php">
+            <input type="submit" value="Bestellen">
+        </form>
+    <?php } else { ?>
+        <form method="post" action="verwerk_bestelling.php">
+            <label for="address">Afleveradres</label>
+            <input type="text" name="address" id="address">
+            <input type="submit" value="Bestellen">
+        </form>
+    <?php } ?>
 <?php } ?>
 
 <?= $footer ?>

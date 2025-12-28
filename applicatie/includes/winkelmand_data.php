@@ -1,4 +1,6 @@
 <?php
+require_once 'db_connectie.php';
+
 // Sessie starten indien nodig
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -57,4 +59,37 @@ function haalWinkelmandOp()
 function leegWinkelmand()
 {
     $_SESSION['cart'] = [];
+}
+
+// Totaalprijs berekenen op basis van Product-prijzen
+function berekenTotaalPrijs($winkelmand)
+{
+    if (empty($winkelmand)) {
+        return 0;
+    }
+
+    // DB-verbinding
+    $db = maakVerbinding();
+
+    $totaal = 0;
+
+    foreach ($winkelmand as $productNaam => $aantal) {
+        // Prijs ophalen
+        $sql = 'SELECT price
+                FROM dbo.Product
+                WHERE name = :name';
+
+        $query = $db->prepare($sql);
+        $query->execute([
+            ':name' => $productNaam
+        ]);
+
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+
+        if ($row && isset($row['price'])) {
+            $totaal += ((float) $row['price']) * (int) $aantal;
+        }
+    }
+
+    return $totaal;
 }

@@ -1,14 +1,13 @@
 <?php
 require_once 'db_connectie.php';
 
-// Gebruiker ophalen op basis van username
 function haalUserOp($username)
 {
-    // Databaseverbinding
+    // DB-verbinding
     $db = maakVerbinding();
 
-    // Usergegevens ophalen
-    $sql = 'SELECT username, password, role
+    // User ophalen
+    $sql = 'SELECT username, password, role, address
             FROM dbo.[User]
             WHERE username = :username';
 
@@ -17,17 +16,15 @@ function haalUserOp($username)
         ':username' => $username
     ]);
 
-    // Resultaat teruggeven
     return $query->fetch(PDO::FETCH_ASSOC);
 }
 
-// Controleren of username al bestaat
 function bestaatUser($username)
 {
-    // Databaseverbinding
+    // DB-verbinding
     $db = maakVerbinding();
 
-    // Bestaan van username controleren
+    // Bestaat user?
     $sql = 'SELECT TOP 1 username
             FROM dbo.[User]
             WHERE username = :username';
@@ -37,6 +34,48 @@ function bestaatUser($username)
         ':username' => $username
     ]);
 
-    // True bij bestaand resultaat
     return $query->fetch(PDO::FETCH_ASSOC) ? true : false;
+}
+
+function haalAdresOp($username)
+{
+    // DB-verbinding
+    $db = maakVerbinding();
+
+    // Adres ophalen
+    $sql = 'SELECT address
+            FROM dbo.[User]
+            WHERE username = :username';
+
+    $query = $db->prepare($sql);
+    $query->execute([
+        ':username' => $username
+    ]);
+
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        return '';
+    }
+
+    return $row['address'] ? $row['address'] : '';
+}
+
+function slaAdresOp($username, $address)
+{
+    // DB-verbinding
+    $db = maakVerbinding();
+
+    // Adres opslaan
+    $sql = 'UPDATE dbo.[User]
+            SET address = :address
+            WHERE username = :username';
+
+    $query = $db->prepare($sql);
+    $query->execute([
+        ':address' => $address,
+        ':username' => $username
+    ]);
+
+    return true;
 }

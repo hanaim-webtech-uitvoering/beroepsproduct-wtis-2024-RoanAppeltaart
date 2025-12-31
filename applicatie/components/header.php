@@ -46,7 +46,7 @@ HTML
 )
 .
 ($isIngelogd && $rol === 'Personnel'
-    ? '<li><a href="bestellingen.php">Bestellingen</a></li>'
+    ? '<li><a href="personeel.php">Bestellingen</a></li>'
     : ''
 )
 .

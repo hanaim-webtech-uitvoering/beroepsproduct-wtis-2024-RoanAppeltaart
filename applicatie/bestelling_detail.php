@@ -5,23 +5,26 @@ require_once 'includes/auth.php';
 require_once 'includes/status_helper.php';
 require_once 'includes/bestelling_detail_data.php';
 
-// Alleen klanten
-requireRole('Customer');
+// Alleen personeel
+requireRole('Personnel');
+
+// Status-foutmelding ophalen
+$statusError = isset($_SESSION['status_error']) ? $_SESSION['status_error'] : '';
+unset($_SESSION['status_error']);
 
 // Order-id ophalen
 $orderId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 if ($orderId <= 0) {
-    header('Location: mijn_bestellingen.php');
+    header('Location: personeel.php');
     exit;
 }
 
-// Bestelling ophalen (alleen eigen)
-$username = $_SESSION['user'];
-$bestelling = haalBestellingOpVoorKlant($orderId, $username);
+// Bestelling ophalen
+$bestelling = haalBestellingOp($orderId);
 
 if (!$bestelling) {
-    header('Location: mijn_bestellingen.php');
+    header('Location: personeel.php');
     exit;
 }
 
@@ -31,6 +34,9 @@ $regels = haalBestelRegelsOp($orderId);
 // Header/Footer
 $header = maakHeader('Bestelling details');
 $footer = maakFooter();
+
+// Huidige status
+$huidigeStatus = (int) $bestelling['status'];
 ?>
 
 <?= $header ?>
@@ -40,7 +46,27 @@ $footer = maakFooter();
 
     <p><strong>Datum:</strong> <?= htmlspecialchars($bestelling['datetime']) ?></p>
     <p><strong>Status:</strong> <?= htmlspecialchars(statusTekst($bestelling['status'])) ?></p>
+    <p><strong>Klant:</strong> <?= htmlspecialchars($bestelling['client_name']) ?></p>
     <p><strong>Afleveradres:</strong> <?= htmlspecialchars($bestelling['address']) ?></p>
+
+    <h3>Status aanpassen</h3>
+
+    <?php if ($statusError !== '') { ?>
+        <p><?= htmlspecialchars($statusError) ?></p>
+    <?php } ?>
+
+    <form method="post" action="verwerk_status.php">
+        <input type="hidden" name="order_id" value="<?= (int) $bestelling['order_id'] ?>">
+
+        <label for="status">Status</label>
+        <select name="status" id="status">
+            <option value="0" <?= $huidigeStatus === 0 ? 'selected' : '' ?>>Nieuw</option>
+            <option value="1" <?= $huidigeStatus === 1 ? 'selected' : '' ?>>In behandeling</option>
+            <option value="2" <?= $huidigeStatus === 2 ? 'selected' : '' ?>>Bezorgd</option>
+        </select>
+
+        <input type="submit" value="Opslaan">
+    </form>
 
     <h3>Producten</h3>
 
@@ -66,7 +92,7 @@ $footer = maakFooter();
     <?php } ?>
 
     <p>
-        <a href="mijn_bestellingen.php">Terug naar Mijn Bestellingen</a>
+        <a href="personeel.php">Terug naar Bestellingen</a>
     </p>
 </div>
 

@@ -1,21 +1,19 @@
 <?php
 require_once 'db_connectie.php';
 
-function haalBestellingOpVoorKlant($orderId, $username)
+function haalBestellingOp($orderId)
 {
     // DB-verbinding
     $db = maakVerbinding();
 
-    // Bestelling ophalen (alleen eigen bestelling)
-    $sql = "SELECT order_id, datetime, status, address, client_username
+    // Bestelling ophalen
+    $sql = "SELECT order_id, datetime, status, address, client_username, client_name, personnel_username
             FROM dbo.Pizza_Order
-            WHERE order_id = :order_id
-              AND client_username = :username";
+            WHERE order_id = :order_id";
 
     $query = $db->prepare($sql);
     $query->execute([
-        ':order_id' => (int) $orderId,
-        ':username' => $username
+        ':order_id' => (int) $orderId
     ]);
 
     return $query->fetch(PDO::FETCH_ASSOC);

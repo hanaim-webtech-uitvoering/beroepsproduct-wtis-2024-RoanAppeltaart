@@ -14,6 +14,21 @@ $footer = maakFooter();
 
 // Bestellingen ophalen
 $bestellingen = haalAlleBestellingenOp();
+
+// Sorteren: status (0,1,2) en daarna datum desc
+usort($bestellingen, function ($a, $b) {
+    $statusA = (int) $a['status'];
+    $statusB = (int) $b['status'];
+
+    if ($statusA !== $statusB) {
+        return $statusA <=> $statusB;
+    }
+
+    $tijdA = strtotime($a['datetime']);
+    $tijdB = strtotime($b['datetime']);
+
+    return $tijdB <=> $tijdA;
+});
 ?>
 
 <?= $header ?>
